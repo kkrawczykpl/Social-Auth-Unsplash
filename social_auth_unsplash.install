@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Install and uninstall functions for the Unsplash Login module.
+ */
+
+use Drupal\social_api\Utility\SocialApiImplementerInstaller;
+use Drupal\social_auth\Controller\SocialAuthController;
+
+/**
+ * Implements hook_requirements().
+ *
+ * This hook allows to check if the required libraries for your implementer
+ * has been downloaded.
+ */
+function social_auth_unsplash_requirements($phase) {
+  $requirements = [];
+
+  // Social API should be installed at this point in order to check library.
+  \Drupal::service('module_installer')->install(['social_api']);
+
+  // When the site builder wants to enable this module.
+  if ($phase == 'install') {
+    // We check that the required library was downloaded beforehand.
+    $requirements = SocialApiImplementerInstaller::checkLibrary('social_auth_unsplash', 'Social Auth Unsplash', 'hughbertd/oauth2-unsplash', 1.0, 1.2);
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_install().
+ */
+function social_auth_unsplash_install() {
+  SocialAuthController::setLoginButtonSettings('social_auth_unsplash', 'social_auth_unsplash.redirect_to_unsplash', 'img/Unsplash.svg');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_auth_unsplash_uninstall() {
+  SocialAuthController::deleteLoginButtonSettings('social_auth_unsplash');
+}

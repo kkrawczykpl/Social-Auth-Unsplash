@@ -1,0 +1,8 @@
+name: Social Auth Unsplash
+description: Social Auth Unsplash - Integration for Unsplash
+core: 8.x
+type: module
+package: Social
+configure: social_auth_unsplash.settings_form
+dependencies:
+  - social_auth:social_auth (>= 8.x-2.x)

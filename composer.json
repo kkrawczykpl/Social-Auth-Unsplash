@@ -1,0 +1,16 @@
+{
+    "name": "kkrawczyk/social_auth_unsplash",
+    "description": "Social Auth integration for Unsplash",
+    "type": "drupal-module",
+    "require": {
+        "hughbertd/oauth2-unsplash": "dev-master"
+    },
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Krzysztof Krawczyk",
+            "email": "krzysztof@kkrawczyk.pl"
+        }
+    ],
+    "minimum-stability": "dev"
+}
