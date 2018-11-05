@@ -34,7 +34,10 @@ class UnsplashAuthSettingsForm extends SocialAuthSettingsForm {
    * @param \Drupal\Core\Routing\RequestContext $request_context
    *   Holds information about the current request.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, PathValidatorInterface $path_validator, RequestContext $request_context) {
+  public function __construct(ConfigFactoryInterface $config_factory,
+                              RouteProviderInterface $route_provider,
+                              PathValidatorInterface $path_validator,
+                              RequestContext $request_context) {
     parent::__construct($config_factory, $route_provider, $path_validator);
     $this->requestContext = $request_context;
   }
