@@ -19,7 +19,7 @@ use Drupal\social_api\Settings\SettingsBase;
 class UnsplashAuthSettings extends SettingsBase implements UnsplashAuthSettingsInterface {
 
   /**
-   * Appliaction ID.
+   * Client ID.
    *
    * @var string
    */
