@@ -2,6 +2,7 @@
 
 namespace Drupal\social_auth_unsplash\Controller;
 
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\social_api\Plugin\NetworkManager;
 use Drupal\social_auth\SocialAuthDataHandler;
@@ -15,6 +16,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Returns responses for Simple Unsplash Connect module routes.
  */
 class UnsplashAuthController extends ControllerBase {
+  /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
   /**
    * The network plugin manager.
    *
@@ -64,12 +72,14 @@ class UnsplashAuthController extends ControllerBase {
    * @param \Drupal\social_auth\SocialAuthDataHandler $data_handler
    *   SocialAuthDataHandler object.
    */
-  public function __construct(NetworkManager $network_manager,
+  public function __construct(MessengerInterface $messenger,
+                              NetworkManager $network_manager,
                               SocialAuthUserManager $user_manager,
                               UnsplashAuthManager $unsplash_manager,
                               RequestStack $request,
                               SocialAuthDataHandler $data_handler) {
 
+    $this->messenger = $messenger;
     $this->networkManager = $network_manager;
     $this->userManager = $user_manager;
     $this->unsplashManager = $unsplash_manager;
@@ -88,6 +98,7 @@ class UnsplashAuthController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('messenger'),
       $container->get('plugin.network.manager'),
       $container->get('social_auth.user_manager'),
       $container->get('social_auth_unsplash.manager'),
@@ -100,10 +111,10 @@ class UnsplashAuthController extends ControllerBase {
    * Response for path 'user/login/unsplash'.
    */
   public function redirectToUnsplash() {
-  	$unsplash = $this->networkManager->createInstance('social_auth_unsplash')->getSdk();
+    $unsplash = $this->networkManager->createInstance('social_auth_unsplash')->getSdk();
 
     if (!$unsplash) {
-      drupal_set_message($this->t('Social Auth Unsplash not configured properly. Contact site administrator.'), 'error');
+      $this->messenger->addError('Social Auth Unsplash not configured properly. Contact site administrator.');
       return $this->redirect('user.login');
     }
 
@@ -127,7 +138,7 @@ class UnsplashAuthController extends ControllerBase {
     $unsplash = $this->networkManager->createInstance('social_auth_unsplash')->getSdk();
 
     if (!$unsplash) {
-      drupal_set_message($this->t('Social Auth Unsplash not configured properly. Contact site administrator.'), 'error');
+      $this->messenger->addError('Social Auth Unsplash not configured properly. Contact site administrator.');
       return $this->redirect('user.login');
     }
 
@@ -136,7 +147,7 @@ class UnsplashAuthController extends ControllerBase {
     $retrievedState = $this->request->getCurrentRequest()->query->get('state');
     if (empty($retrievedState) || ($retrievedState !== $state)) {
       $this->userManager->nullifySessionKeys();
-      drupal_set_message($this->t('Unsplash login failed. Unvalid OAuth2 State.'), 'error');
+      $this->messenger->addError('Unsplash login failed. Unvalid OAuth2 State.');
       return $this->redirect('user.login');
     }
 
@@ -145,7 +156,7 @@ class UnsplashAuthController extends ControllerBase {
     $this->unsplashManager->setClient($unsplash)->authenticate();
 
     if (!$profile = $this->unsplashManager->getUserInfo()) {
-      drupal_set_message($this->t('Unsplash login failed, could not load Unsplash profile. Contact site administrator.'), 'error');
+      $this->messenger->addError('Unsplash login failed, could not load Unsplash profile. Contact site administrator.');
       return $this->redirect('user.login');
     }
 
