@@ -85,3 +85,4 @@ MAINTAINERS
 
 Current maintainers:
  * Krzysztof Krawczyk (kkrawczyk) - https://www.drupal.org/u/pllvsh
+ * Getulio Valentin Sánchez (gvso) - https://www.drupal.org/u/gvso
